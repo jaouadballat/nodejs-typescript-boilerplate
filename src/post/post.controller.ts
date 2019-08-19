@@ -1,9 +1,8 @@
 import * as express from 'express';
 import Post from './post.interface'
+import Controller from './controller'
 
-class PostController {
-    public path = '/posts';
-    public router = express.Router()
+class PostController extends  Controller{
 
     private posts: Post[] =  [
         {
@@ -13,11 +12,19 @@ class PostController {
         }
     ];
 
+    private readonly PATH: string = '/posts';
+
     constructor() {
-        this.initialzeRoutes()
+        super()
+        this.initialzeRoutes();
+        this.setPath(this.PATH)
     }
 
-    initialzeRoutes() {
+    private setPath(path): void {
+        this.path = path
+    }
+
+    initialzeRoutes() : void{
         this.router.get(this.path, this.getAllPosts);
         this.router.get(this.path, this.createPost);
     }
@@ -26,7 +33,7 @@ class PostController {
         response.send(this.posts)
     }
 
-    createPost = (request: express.Request, response: express.Response) => {
+    private createPost = (request: express.Request, response: express.Response) => {
         const post: Post = request.body;
         this.posts.push(post);
         response.send(this.posts)
