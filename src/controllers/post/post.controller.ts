@@ -1,6 +1,7 @@
 import * as express from 'express';
 import Post from './post.interface'
-import Controller from '../controller'
+import Controller from '../controller';
+import PostModel from '../../Model/Post.model'
 
 class PostController extends  Controller{
 
@@ -16,27 +17,30 @@ class PostController extends  Controller{
 
     constructor() {
         super()
+        this.setPath(this.PATH);
         this.initialzeRoutes();
-        this.setPath(this.PATH)
     }
 
-    private setPath(path): void {
+    private setPath = (path): void =>{
         this.path = path
     }
-
-    initialzeRoutes() : void{
+    
+    private initialzeRoutes = () => {
         this.router.get(this.path, this.getAllPosts);
-        this.router.get(this.path, this.createPost);
+        this.router.post(this.path, this.createPost);
     }
 
-    private getAllPosts = (request: express.Request, response: express.Response) => {
-        response.send(this.posts)
+    private getAllPosts = (request: express.Request, response: express.Response): Post[] => {
+        return response.send(this.posts)
     }
 
-    private createPost = (request: express.Request, response: express.Response) => {
-        const post: Post = request.body;
-        this.posts.push(post);
-        response.send(this.posts)
+     private createPost = (request: express.Request, response: express.Response): Post => {
+        const newPost = new PostModel(request.body);
+        return newPost.save((err, post) => {
+            if(err) return console.log(err)
+            return response.send(post)
+
+        })
     }
 }
 
