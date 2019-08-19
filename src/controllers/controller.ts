@@ -1,5 +1,7 @@
 import * as express from 'express';
-import * as mongoose from 'mongoose'
+import * as mongoose from 'mongoose';
+
+require('dotenv').config()
 
 export default class Controller {
 
@@ -11,7 +13,7 @@ export default class Controller {
     }
 
     private connectToDB(){
-        mongoose.connect('mongodb://localhost:27017/typscipt', { useNewUrlParser: true }, function(err) {
+        mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true }, function(err) {
             if(err) return console.log('failed to connect to the DB');
             console.log(`-------------------Connected to DB-------------------------------`);
         });
