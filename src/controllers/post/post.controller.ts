@@ -1,6 +1,6 @@
 import * as express from 'express';
 import Post from './post.interface'
-import Controller from './controller'
+import Controller from '../controller'
 
 class PostController extends  Controller{
 

@@ -1,6 +1,6 @@
 import App from "./app";
 
-import PostController from './post/post.controller'
+import PostController from './controllers/post/post.controller'
 
 const app = new App([
     PostController.handle()
