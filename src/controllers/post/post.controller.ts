@@ -2,6 +2,7 @@ import * as express from 'express';
 import Post from './post.interface'
 import Controller from '../controller';
 import PostModel from '../../Model/Post.model'
+import HttpException from '../../exceptions/HttpException';
 
 class PostController extends  Controller{
 
@@ -44,10 +45,11 @@ class PostController extends  Controller{
         })
     }
 
-    private getPostById = (request: express.Request, response: express.Response) => {
+    private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const postId: express.Request = request.params.id;
         this.post.findById(postId, (err, post) => {
-            if(err) return console.log(err)
+            if (err) return next(new HttpException(500, err))
+            if(!post) return next(new HttpException(404, 'Post not found.'));
                 return response.send(post)
         });
     }
