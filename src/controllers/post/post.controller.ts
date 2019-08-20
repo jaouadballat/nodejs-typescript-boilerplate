@@ -3,6 +3,7 @@ import Post from './post.interface'
 import Controller from '../controller';
 import PostModel from '../../Model/Post.model'
 import HttpException from '../../exceptions/HttpException';
+import PostNotFoundException from '../../exceptions/PostNotFoundException';
 
 class PostController extends  Controller{
 
@@ -49,7 +50,7 @@ class PostController extends  Controller{
         const postId: express.Request = request.params.id;
         this.post.findById(postId, (err, post) => {
             if (err) return next(new HttpException(500, err))
-            if(!post) return next(new HttpException(404, 'Post not found.'));
+            if (!post) return next(new PostNotFoundException(404, 'Post not found.'));
                 return response.send(post)
         });
     }

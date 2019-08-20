@@ -6,7 +6,7 @@ function errorMiddleware(error: HttpException, request: express.Request, respons
     const message: string = error.message || 'Somthing went wrong';
     const status: number = error.status || 500;
 
-    response
+    return response
         .status(status)
         .send({
             status: status,
