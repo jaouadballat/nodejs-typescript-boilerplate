@@ -6,11 +6,13 @@ import PostModel from '../../Model/Post.model'
 class PostController extends  Controller{
 
     private readonly PATH: string = '/posts';
+    private post;
 
     constructor() {
         super()
         this.setPath(this.PATH);
         this.initialzeRoutes();
+        this.post = PostModel;
     }
 
     private setPath = (path): void =>{
@@ -26,7 +28,7 @@ class PostController extends  Controller{
     }
 
     private getAllPosts = (request: express.Request, response: express.Response) => {
-        PostModel.find({}, (err, posts) => {
+        this.post.find({}, (err, posts) => {
             if(err) return console.log(err)
                 return response.send(posts)
         });
@@ -34,7 +36,7 @@ class PostController extends  Controller{
     }
 
      private createPost = (request: express.Request, response: express.Response) => {
-        const newPost = new PostModel(request.body);
+        const newPost = new this.post(request.body);
         return newPost.save((err, post) => {
             if(err) return console.log(err)
             return response.send(post)
@@ -44,7 +46,7 @@ class PostController extends  Controller{
 
     private getPostById = (request: express.Request, response: express.Response) => {
         const postId: express.Request = request.params.id;
-        PostModel.findById(postId, (err, post) => {
+        this.post.findById(postId, (err, post) => {
             if(err) return console.log(err)
                 return response.send(post)
         });
@@ -53,7 +55,7 @@ class PostController extends  Controller{
     private updatePost = (request: express.Request, response: express.Response) => {
         const updatedPost: Post = request.body;
         const postId = request.params.id
-        PostModel.findByIdAndUpdate(postId, updatedPost, {new: true}, (err, post) => {
+        this.post.findByIdAndUpdate(postId, updatedPost, {new: true}, (err, post) => {
             if(err) return console.log(err);
                 return response.send(post);
         });
@@ -61,7 +63,7 @@ class PostController extends  Controller{
 
     private removePost = (request: express.Request, response: express.Response) => {
         const postId = request.params.id
-        PostModel.findByIdAndRemove(postId, (err, post) => {
+        this.post.findByIdAndRemove(postId, (err, post) => {
             if (err) return console.log(err);
             return response.json({status: 'OK'});
         });
