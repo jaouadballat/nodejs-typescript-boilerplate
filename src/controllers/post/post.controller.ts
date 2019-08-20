@@ -21,6 +21,8 @@ class PostController extends  Controller{
         this.router.get(this.path, this.getAllPosts);
         this.router.post(this.path, this.createPost);
         this.router.get(`${this.path}/:id`, this.getPostById);
+        this.router.put(`${this.path}/:id`, this.updatePost);
+        this.router.delete(`${this.path}/:id`, this.removePost);
     }
 
     private getAllPosts = (request: express.Request, response: express.Response) => {
@@ -45,6 +47,23 @@ class PostController extends  Controller{
         PostModel.findById(postId, (err, post) => {
             if(err) return console.log(err)
                 return response.send(post)
+        });
+    }
+
+    private updatePost = (request: express.Request, response: express.Response) => {
+        const updatedPost: Post = request.body;
+        const postId = request.params.id
+        PostModel.findByIdAndUpdate(postId, updatedPost, {new: true}, (err, post) => {
+            if(err) return console.log(err);
+                return response.send(post);
+        });
+    }
+
+    private removePost = (request: express.Request, response: express.Response) => {
+        const postId = request.params.id
+        PostModel.findByIdAndRemove(postId, (err, post) => {
+            if (err) return console.log(err);
+            return response.json({status: 'OK'});
         });
     }
 }

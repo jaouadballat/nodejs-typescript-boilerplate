@@ -13,7 +13,7 @@ export default class Controller {
     }
 
     private connectToDB(){
-        mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true }, function(err) {
+        mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true }, { useFindAndModify: false }, function(err) {
             if(err) return console.log('failed to connect to the DB');
             console.log(`-------------------Connected to DB-------------------------------`);
         });
