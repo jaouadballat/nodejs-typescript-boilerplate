@@ -20,6 +20,7 @@ class PostController extends  Controller{
     private initialzeRoutes = () => {
         this.router.get(this.path, this.getAllPosts);
         this.router.post(this.path, this.createPost);
+        this.router.get(`${this.path}/:id`, this.getPostById);
     }
 
     private getAllPosts = (request: express.Request, response: express.Response) => {
@@ -37,6 +38,14 @@ class PostController extends  Controller{
             return response.send(post)
 
         })
+    }
+
+    private getPostById = (request: express.Request, response: express.Response) => {
+        const postId: express.Request = request.params.id;
+        PostModel.findById(postId, (err, post) => {
+            if(err) return console.log(err)
+                return response.send(post)
+        });
     }
 }
 
