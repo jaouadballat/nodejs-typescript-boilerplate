@@ -5,14 +5,6 @@ import PostModel from '../../Model/Post.model'
 
 class PostController extends  Controller{
 
-    private posts: Post[] =  [
-        {
-            author: 'jaouad ballat',
-            content: 'joaud ballat',
-            title: 'jaouad ballat'
-        }
-    ];
-
     private readonly PATH: string = '/posts';
 
     constructor() {
@@ -30,11 +22,15 @@ class PostController extends  Controller{
         this.router.post(this.path, this.createPost);
     }
 
-    private getAllPosts = (request: express.Request, response: express.Response): Post[] => {
-        return response.send(this.posts)
+    private getAllPosts = (request: express.Request, response: express.Response) => {
+        PostModel.find({}, (err, posts) => {
+            if(err) return console.log(err)
+                return response.send(posts)
+        });
+            
     }
 
-     private createPost = (request: express.Request, response: express.Response): Post => {
+     private createPost = (request: express.Request, response: express.Response) => {
         const newPost = new PostModel(request.body);
         return newPost.save((err, post) => {
             if(err) return console.log(err)
