@@ -56,7 +56,7 @@ export default class AuthenticatedController extends Controller {
                 if(!res) return next(new WrongCredentialException())
                 return response.send({
                     ...userLogedIn,
-                    password: ""
+                    password: undefined
                 });
             });
 
