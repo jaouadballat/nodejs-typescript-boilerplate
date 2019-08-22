@@ -1,11 +1,14 @@
 import Controller from "../controller";
 import UserModel from '../../Model/user.model';
 import * as bcrypt from 'bcrypt';
-import * as express from 'express'
+import * as express from 'express';
+import * as jwt from 'jsonwebtoken';
 import IUser from '../user/user.interface';
 import HttpException from '../../exceptions/HttpException';
 import UserWithThatEmailAlreadyExist from "../../exceptions/UserWithThatEmailAlreadyExist";
 import WrongCredentialException from "../../exceptions/WrongCredentialException";
+import TokenInterface from "../../interfaces/TokenInterface";
+import DataStoredInTokenInterface from "../../interfaces/DataStoredInTokenInterface";
 
 require('dotenv').config()
 
@@ -35,6 +38,10 @@ export default class AuthenticatedController extends Controller {
             bcrypt.hash(user.password, process.env.SALT_ROUNDS, function(err, hash) {
                 hashedPassword = hash; 
             });
+
+            let tokenData = this.createToken(user);
+            response.cookie('token',tokenData.token, { maxAge: tokenData.expireIn, httpOnly: true });
+            
             user = {
                 ...user,
                 password: hashedPassword
@@ -53,7 +60,11 @@ export default class AuthenticatedController extends Controller {
             if(err) return next(new HttpException(500, err));
             if(!user) return next(new WrongCredentialException());
             bcrypt.compare(user.password, userLogedIn.password, (err, res) => {
-                if(!res) return next(new WrongCredentialException())
+                if(!res) return next(new WrongCredentialException());
+
+                let tokenData = this.createToken(user);
+                response.cookie('token',tokenData.token, { maxAge: tokenData.expireIn, httpOnly: true });
+
                 return response.send({
                     ...userLogedIn,
                     password: undefined
@@ -63,4 +74,18 @@ export default class AuthenticatedController extends Controller {
         })
     }
 
+    private createToken(user): TokenInterface {
+        const dataStoredInToken: DataStoredInTokenInterface = {
+            _id: user._id
+        }
+
+        const expireIn: number = 60 * 60; // 1Hour
+
+        const token = jwt.sign(dataStoredInToken, process.env.PRIVATE_TOKEN_KEY);
+
+        return {
+            expireIn,
+            token
+        };
+    }
 }
