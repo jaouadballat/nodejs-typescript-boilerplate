@@ -1,4 +1,5 @@
 import * as express from 'express';
+import MissingTokenException from '../exceptions/MissingTokenException';
 
 
 function authenticatedMiddleware(request: express.Request, response: express.Response, next: express.NextFunction) {
@@ -9,3 +10,5 @@ function authenticatedMiddleware(request: express.Request, response: express.Res
         return next(new MissingTokenException())
     }
 }
+
+export default authenticatedMiddleware;
