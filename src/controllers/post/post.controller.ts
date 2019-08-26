@@ -17,7 +17,7 @@ class PostController extends  Controller{
         this.post = PostModel;
     }
 
-    private setPath = (path): void =>{
+    private setPath = (path): void => {
         this.path = path
     }
     
@@ -29,18 +29,18 @@ class PostController extends  Controller{
         this.router.delete(`${this.path}/:id`, this.removePost);
     }
 
-    private getAllPosts = (request: express.Request, response: express.Response) => {
+    private getAllPosts = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         this.post.find({}, (err, posts) => {
-            if(err) return console.log(err)
+            if(err) return next(new HttpException(500, err));
                 return response.send(posts)
         });
             
     }
 
-     private createPost = (request: express.Request, response: express.Response) => {
+     private createPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const newPost = new this.post(request.body);
         return newPost.save((err, post) => {
-            if(err) return console.log(err)
+            if(err) return next(new HttpException(500, err));
             return response.send(post)
 
         })
@@ -55,20 +55,20 @@ class PostController extends  Controller{
         });
     }
 
-    private updatePost = (request: express.Request, response: express.Response) => {
+    private updatePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const updatedPost: Post = request.body;
         const postId = request.params.id
         this.post.findByIdAndUpdate(postId, updatedPost, {new: true}, (err, post) => {
-            if(err) return console.log(err);
+            if(err) return next(new HttpException(500, err));
                 return response.send(post);
         });
     }
 
-    private removePost = (request: express.Request, response: express.Response) => {
+    private removePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const postId = request.params.id
         this.post.findByIdAndRemove(postId, (err, post) => {
-            if (err) return console.log(err);
-            return response.json({status: 'OK'});
+            if (err) return next(new HttpException(500, err));
+            return response.json({ status: 'OK' });
         });
     }
 }
