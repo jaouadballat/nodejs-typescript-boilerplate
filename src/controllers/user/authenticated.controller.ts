@@ -35,7 +35,7 @@ export default class AuthenticatedController extends Controller {
 
         let { error, user } = this.findOne(userBody.email);
         if(error) return next(new HttpException(500, error));
-        if(!user) return next(new WrongCredentialException());
+        if(user) return next(new UserWithThatEmailAlreadyExist(user.email));
 
         bcrypt.hash(user.password, process.env.SALT_ROUNDS, function(err, hash) {
             hashedPassword = hash; 
