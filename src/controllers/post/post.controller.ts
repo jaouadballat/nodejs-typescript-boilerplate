@@ -14,7 +14,7 @@ class PostController extends  Controller{
         super()
         this.setPath(this.PATH);
         this.initialzeRoutes();
-        this.post = PostModel;
+        this.model = PostModel;
     }
 
     private setPath = (path): void => {
@@ -30,15 +30,13 @@ class PostController extends  Controller{
     }
 
     private getAllPosts = (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        this.post.find({}, (err, posts) => {
-            if(err) return next(new HttpException(500, err));
-                return response.send(posts)
-        });
-            
+        let { error, data } = this.findAll();
+        if(error) return next(new HttpException(500, error));
+        return response.send(data)
     }
 
      private createPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        const newPost = new this.post(request.body);
+        const newPost = new this.model(request.body);
         return newPost.save((err, post) => {
             if(err) return next(new HttpException(500, err));
             return response.send(post)
@@ -48,25 +46,24 @@ class PostController extends  Controller{
 
     private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const postId: string = request.params.id;
-        this.post.findById(postId, (err, post) => {
-            if (err) return next(new HttpException(500, err))
-            if (!post) return next(new PostNotFoundException(404, 'Post not found.'));
-                return response.send(post)
-        });
+        let { error, data } = this.findOneById(postId);
+        if (error) return next(new HttpException(500, error));
+        if (!data) return next(new PostNotFoundException(404, 'Post not found.'));
+        return response.send(data);
     }
 
     private updatePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const updatedPost: Post = request.body;
         const postId = request.params.id
-        this.post.findByIdAndUpdate(postId, updatedPost, {new: true}, (err, post) => {
-            if(err) return next(new HttpException(500, err));
-                return response.send(post);
-        });
+        let { error, data } = this.findByIdAndUpdate(postId, updatedPost);
+        if (error) return next(new HttpException(500, error));
+        if (!data) return next(new PostNotFoundException(404, 'Post not found.'));
+        return response.send(data);
     }
 
     private removePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const postId = request.params.id
-        this.post.findByIdAndRemove(postId, (err, post) => {
+        this.model.findByIdAndRemove(postId, (err, post) => {
             if (err) return next(new HttpException(500, err));
             return response.json({ status: 'OK' });
         });
