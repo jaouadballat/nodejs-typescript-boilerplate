@@ -71,7 +71,6 @@ export default class AuthenticatedController extends Controller {
                     password: undefined
                 });
             });
-
     }
 
     private createToken(user): TokenInterface {
