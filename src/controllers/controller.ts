@@ -64,13 +64,13 @@ export default class Controller {
     private setError(err) {
         this.response = {
             error: err,
-            ...this.response
+            data: null
         }
     }
 
     private setData(data) {
         this.response = {
-            ...this.response,
+            error: null,
             data
         }
     }
