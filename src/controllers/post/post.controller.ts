@@ -47,7 +47,7 @@ class PostController extends  Controller{
     }
 
     private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        const postId: express.Request = request.params.id;
+        const postId: string = request.params.id;
         this.post.findById(postId, (err, post) => {
             if (err) return next(new HttpException(500, err))
             if (!post) return next(new PostNotFoundException(404, 'Post not found.'));
