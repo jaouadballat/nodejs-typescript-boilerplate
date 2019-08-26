@@ -27,7 +27,7 @@ export default class Controller {
         const id: string = request.params.id;
         this.model.findOneById(id, (err, data) => {
             if(err) return next(new HttpException(500, err));
-            else if(!data) return next(new NotFoundException(404, `this data with id: ${id} not found`))
+            else if(!data) return next(new NotFoundException())
             return response.send(data)
         })
     }
@@ -46,7 +46,7 @@ export default class Controller {
         const id = request.params.id;
         this.model.findByIdAndUpdate(id, updatedModel, {new: true}, (err, data) => {
             if(err) return next(new HttpException(500, err));
-            else if(!data) return next(new NotFoundException(404, `this data with id: ${id} not found`));
+            else if(!data) return next(new NotFoundException());
                 return response.send(data);
         });
     }
@@ -55,7 +55,7 @@ export default class Controller {
         const id = request.params.id
         this.model.findByIdAndRemove(id, (err, data) => {
             if (err) return next(new HttpException(500, err));
-            else if(!data) return next(new NotFoundException(404, `this data with id: ${id} not found`));
+            else if(!data) return next(new NotFoundException());
             return response.json({ status: 'OK' });
         });
     }
