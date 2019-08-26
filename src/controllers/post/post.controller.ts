@@ -32,7 +32,7 @@ class PostController extends  Controller{
     private getAllPosts = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         let { error, posts } = this.findAll();
         if(error) return next(new HttpException(500, error));
-        return response.send(posts)
+        return response.send(posts);
     }
 
      private createPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
