@@ -1,4 +1,6 @@
 import * as express from 'express';
+import * as mongoose from 'mongoose'
+import HttpException from '../exceptions/HttpException';
 
 require('dotenv').config()
 
@@ -8,8 +10,8 @@ export default class Controller {
     protected router = express.Router();
     protected model;
     protected response: {
-        error: '',
-        data: ''
+        error: HttpException,
+        data: mongoose.Document
     }; 
 
  
@@ -49,6 +51,15 @@ export default class Controller {
         return this.model.findByIdAndRemove(id, (err, data) => {
             if (err) this.setError(err);
             else this.setData({ status: 'OK' });
+
+            return this.getResponse();
+        });
+    }
+
+    protected findOne(params) {
+        return this.model.findOne(params, (err, data) => {
+            if (err) this.setError(err);
+            else this.setData(data);
 
             return this.getResponse();
         });

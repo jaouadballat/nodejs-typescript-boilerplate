@@ -30,9 +30,9 @@ class PostController extends  Controller{
     }
 
     private getAllPosts = (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        let { error, data } = this.findAll();
+        let { error, posts } = this.findAll();
         if(error) return next(new HttpException(500, error));
-        return response.send(data)
+        return response.send(posts)
     }
 
      private createPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
@@ -46,19 +46,19 @@ class PostController extends  Controller{
 
     private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const postId: string = request.params.id;
-        let { error, data } = this.findOneById(postId);
+        let { error, post } = this.findOneById(postId);
         if (error) return next(new HttpException(500, error));
-        if (!data) return next(new PostNotFoundException(404, 'Post not found.'));
-        return response.send(data);
+        if (!post) return next(new PostNotFoundException(404, 'Post not found.'));
+        return response.send(post);
     }
 
     private updatePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const updatedPost: Post = request.body;
         const postId = request.params.id
-        let { error, data } = this.findByIdAndUpdate(postId, updatedPost);
+        let { error, post } = this.findByIdAndUpdate(postId, updatedPost);
         if (error) return next(new HttpException(500, error));
-        if (!data) return next(new PostNotFoundException(404, 'Post not found.'));
-        return response.send(data);
+        if (!post) return next(new PostNotFoundException(404, 'Post not found.'));
+        return response.send(post);
     }
 
     private removePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
