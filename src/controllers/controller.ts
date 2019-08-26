@@ -45,6 +45,15 @@ export default class Controller {
         });
     }
 
+    protected findByIdAndRemove(id: string) {
+        return this.model.findByIdAndRemove(id, (err, data) => {
+            if (err) this.setError(err);
+            else this.setData({ status: 'OK' });
+
+            return this.getResponse();
+        });
+    }
+
     private setError(err) {
         this.response = {
             error: err,

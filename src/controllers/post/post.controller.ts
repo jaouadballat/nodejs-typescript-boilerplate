@@ -62,11 +62,11 @@ class PostController extends  Controller{
     }
 
     private removePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        const postId = request.params.id
-        this.model.findByIdAndRemove(postId, (err, post) => {
-            if (err) return next(new HttpException(500, err));
-            return response.json({ status: 'OK' });
-        });
+        const postId = request.params.id;
+        let { error, post } = this.findByIdAndRemove(postId);
+        if (error) return next(new HttpException(500, error));
+        if (!post) return next(new PostNotFoundException(404, 'Post not found.'));
+        return response.send(post);
     }
 }
 
