@@ -43,17 +43,19 @@ export default class Controller {
 
     protected update = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const updatedModel = request.body;
-        const id = request.params.id
+        const id = request.params.id;
         this.model.findByIdAndUpdate(id, updatedModel, {new: true}, (err, data) => {
             if(err) return next(new HttpException(500, err));
+            else if(!data) return next(new NotFoundException(404, `this data with id: ${id} not found`));
                 return response.send(data);
         });
     }
 
     protected remove = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const id = request.params.id
-        this.model.findByIdAndRemove(id, (err) => {
+        this.model.findByIdAndRemove(id, (err, data) => {
             if (err) return next(new HttpException(500, err));
+            else if(!data) return next(new NotFoundException(404, `this data with id: ${id} not found`));
             return response.json({ status: 'OK' });
         });
     }
