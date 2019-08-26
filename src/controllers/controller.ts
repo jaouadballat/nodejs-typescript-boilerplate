@@ -1,5 +1,6 @@
 import * as express from 'express';
 import HttpException from '../exceptions/HttpException';
+import NotFoundException from '../exceptions/NotFoundException';
 
 
 require('dotenv').config()
@@ -22,10 +23,39 @@ export default class Controller {
         });
     }
 
-    protected findById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        this.model.findOneById(request.params.id, (err, data) => {
+    protected getById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+        const id: string = request.params.id;
+        this.model.findOneById(id, (err, data) => {
             if(err) return next(new HttpException(500, err));
+            else if(!data) return next(new NotFoundException(404, `this data with id: ${id} not found`))
             return response.send(data)
         })
     }
+
+    protected create = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+        const model = new this.model(request.body);
+        return model.save((err, data) => {
+            if(err) return next(new HttpException(500, err));
+            return response.send(data)
+
+        })
+    }
+
+    protected update = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+        const updatedModel = request.body;
+        const id = request.params.id
+        this.model.findByIdAndUpdate(id, updatedModel, {new: true}, (err, data) => {
+            if(err) return next(new HttpException(500, err));
+                return response.send(data);
+        });
+    }
+
+    protected remove = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+        const id = request.params.id
+        this.model.findByIdAndRemove(id, (err) => {
+            if (err) return next(new HttpException(500, err));
+            return response.json({ status: 'OK' });
+        });
+    }
+
 }
