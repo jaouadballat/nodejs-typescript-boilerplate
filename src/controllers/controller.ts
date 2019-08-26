@@ -1,5 +1,5 @@
 import * as express from 'express';
-import ResponseInterface from '../exceptions/ResponseInterface';
+import ResponseInterface from '../interfaces/ResponseInterface';
 
 require('dotenv').config()
 

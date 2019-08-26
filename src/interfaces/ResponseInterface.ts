@@ -1,4 +1,4 @@
-import HttpException from "./HttpException";
+import HttpException from "../exceptions/HttpException";
 import { Document } from 'mongoose';
 
 export default interface ResponseInterface {

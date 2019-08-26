@@ -5,7 +5,7 @@ import PostModel from '../../Model/Post.model'
 import HttpException from '../../exceptions/HttpException';
 import PostNotFoundException from '../../exceptions/PostNotFoundException';
 
-class PostController extends  Controller{
+class PostController extends Controller{
 
     private readonly PATH: string = '/posts';
     private post;
