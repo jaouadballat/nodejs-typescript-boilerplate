@@ -23,7 +23,7 @@ export default class Controller {
     }
 
     protected findById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        this.model.findOneById(request.param.bind, (err, data) => {
+        this.model.findOneById(request.params.id, (err, data) => {
             if(err) return next(new HttpException(500, err));
             return response.send(data)
         })
