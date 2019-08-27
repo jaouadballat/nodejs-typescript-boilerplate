@@ -17,47 +17,32 @@ export default class Controller {
 
     protected findAll() {
         return this.model.find({}, (err, data) => {
-            if(err) this.setError(err);
-            else this.setData(data);
-
-            return this.getResponse();
+            return this.getResult(err, data);
         });
 
     }
 
     protected findOneById(id) {
         return this.model.findById(id, (err, data) => {
-            if (err) this.setError(err);
-            else this.setData(data);
-
-            return this.getResponse();
+            return this.getResult(err, data);
         });
     }
 
     protected findByIdAndUpdate(id, data) {
         return this.model.findByIdAndUpdate(id, data, {new: true}, (err, data) => {
-            if (err) this.setError(err);
-            else this.setData(data);
-
-            return this.getResponse();
+            return this.getResult(err, data);
         });
     }
 
     protected findByIdAndRemove(id: string) {
         return this.model.findByIdAndRemove(id, (err, data) => {
-            if (err) this.setError(err);
-            else this.setData({ status: 'OK' });
-
-            return this.getResponse();
+            return this.getResult(err, { status: 'OK'});
         });
     }
 
     protected findOne(params) {
         return this.model.findOne(params, (err, data) => {
-            if (err) this.setError(err);
-            else this.setData(data);
-
-            return this.getResponse(); 
+            return this.getResult(err, data);
         });
     }
 
@@ -77,5 +62,12 @@ export default class Controller {
 
     private getResponse() {
         return this.response;
+    }
+
+    private getResult(err, data) {
+        if (err) this.setError(err);
+        else this.setData(data);
+
+        return this.getResponse();
     }
 }
