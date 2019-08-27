@@ -15,8 +15,6 @@ require('dotenv').config()
 export default class AuthenticatedController extends Controller {
     
 
-    private User;
-
     constructor() {
         super();
         this.path = 'auth';

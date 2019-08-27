@@ -8,7 +8,6 @@ import PostNotFoundException from '../../exceptions/PostNotFoundException';
 class PostController extends Controller{
 
     private readonly PATH: string = '/posts';
-    private post;
 
     constructor() {
         super()
