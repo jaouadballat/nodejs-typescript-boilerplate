@@ -46,6 +46,13 @@ export default class Controller {
         });
     }
 
+    protected createOne(params) {
+        const request = new this.model(params);
+        return request.save((err, data) => {
+            return this.getResult(err, data);
+        });
+    }
+
     private setError(err) {
         this.response = {
             error: err,

@@ -35,12 +35,9 @@ class PostController extends Controller{
     }
 
      private createPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
-        const newPost = new this.model(request.body);
-        return newPost.save((err, post) => {
-            if(err) return next(new HttpException(500, err));
-            return response.send(post)
-
-        })
+        let { error, post } = this.createOne(request.body);
+        if(error) return next(new HttpException(500, error));
+        return response.send(post);
     }
 
     private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
