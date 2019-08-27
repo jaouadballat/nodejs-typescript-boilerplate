@@ -1,5 +1,7 @@
 import * as express from 'express';
+import * as mongoose from 'mongoose';
 import ResponseInterface from '../interfaces/ResponseInterface';
+import HttpException from '../exceptions/HttpException';
 
 require('dotenv').config()
 
@@ -19,7 +21,6 @@ export default class Controller {
         return this.model.find({}, (err, data) => {
             return this.getResult(err, data);
         });
-
     }
 
     protected findOneById(id) {
@@ -40,20 +41,20 @@ export default class Controller {
         });
     }
 
-    protected findOne(params) {
+    protected findOne(params: mongoose.Document) {
         return this.model.findOne(params, (err, data) => {
             return this.getResult(err, data);
         });
     }
 
-    protected createOne(params) {
+    protected createOne(params: mongoose.Document) {
         const request = new this.model(params);
         return request.save((err, data) => {
             return this.getResult(err, data);
         });
     }
 
-    private setError(err) {
+    private setError(err: HttpException) {
         this.response = {
             error: err,
             data: null
@@ -67,11 +68,11 @@ export default class Controller {
         }
     }
 
-    private getResponse() {
+    private getResponse(): ResponseInterface {
         return this.response;
     }
 
-    private getResult(err, data) {
+    private getResult(err, data): ResponseInterface {
         if (err) this.setError(err);
         else this.setData(data);
 
