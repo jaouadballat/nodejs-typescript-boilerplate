@@ -36,6 +36,7 @@ export default class AuthenticatedController extends Controller {
         if(user) return next(new UserWithThatEmailAlreadyExist(user.email));
 
         bcrypt.hash(user.password, process.env.SALT_ROUNDS, function(err, hash) {
+            if(err) return next(new HttpException(500, error));
             hashedPassword = hash; 
         });
 
