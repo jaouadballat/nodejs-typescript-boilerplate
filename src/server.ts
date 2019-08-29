@@ -6,6 +6,6 @@ import AuthenticatedController from "./controllers/user/authenticated.controller
 const app = new App([
     PostController.handle(),
     AuthenticatedController.handle()
-], 3000)
+], process.env.PORT || 3000)
 
 app.listen();
