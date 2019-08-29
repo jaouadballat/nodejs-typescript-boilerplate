@@ -4,19 +4,21 @@ import MissingTokenException from '../exceptions/MissingTokenException';
 import userModel from '../Model/user.model';
 import HttpException from '../exceptions/HttpException';
 import WrongAuthenticationTokenException from '../exceptions/WrongAuthenticationTokenException';
+import RequestWithUser from '../interfaces/RequestWithUser';
 
 require('dotenv').config()
 
 
-function authenticatedMiddleware(request: express.Request, response: express.Response, next: express.NextFunction) {
+function authenticatedMiddleware(request: RequestWithUser, response: express.Response, next: express.NextFunction) {
     const cookie = request.cookies;
     if(cookie && cookie.token) {
         try {
-            let userId = jwt.verify(cookie.token, process.env.PRIVATE_TOKEN_KEY);
-            userModel.findById(userId._id, (err, user) => {
+            let { _id } = jwt.verify(cookie.token, process.env.PRIVATE_TOKEN_KEY);
+            userModel.findById(_id, (err, user) => {
                 if(err) return next(new HttpException(500, err));
                 if(user) {
-                    //request.user = user; 
+                    request.user = user; 
+                    next();
                 } else {
                     return next(new WrongAuthenticationTokenException())
                 }
