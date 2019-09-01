@@ -25,7 +25,7 @@ class PostController extends  Controller {
     private initialzeRoutes = () => {
         this.router.get(this.path, this.getAllPosts);
         // this.router.post(this.path, this.createPost);
-        // this.router.get(`${this.path}/:id`, this.getPostById);
+        this.router.get(`${this.path}/:id`, this.getPostById);
         // this.router.put(`${this.path}/:id`, this.updatePost);
         // this.router.delete(`${this.path}/:id`, this.removePost);
     }
@@ -46,14 +46,15 @@ class PostController extends  Controller {
     //     })
     // }
 
-    // private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
-    //     const postId: express.Request = request.params.id;
-    //     this.post.findById(postId, (err, post) => {
-    //         if (err) return next(new HttpException(500, err))
-    //         if (!post) return next(new PostNotFoundException(404, 'Post not found.'));
-    //             return response.send(post)
-    //     });
-    // }
+    private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+        const postId: express.Request = request.params.id;
+        this.findOneById(postId)
+            .then(post => {
+                if (!post) return next(new PostNotFoundException(404, 'Post not found.'));
+                return response.send(post)
+            })
+            .catch(error => next(new HttpException(500, error)));
+    }
 
     // private updatePost = (request: express.Request, response: express.Response) => {
     //     const updatedPost: Post = request.body;

@@ -26,9 +26,9 @@ export default class Controller {
     }
 
     protected findOneById(id) {
-        return this.model.findById(id, (err, data) => {
-            return this.getResult(err, data);
-        });
+        return this.model.findById(id)
+            .then(data => data)
+            .catch(error => error);
     }
 
     protected findByIdAndUpdate(id, data) {
