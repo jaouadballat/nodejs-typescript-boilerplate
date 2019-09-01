@@ -1,7 +1,5 @@
 import * as express from 'express';
 import * as mongoose from 'mongoose';
-import HttpException from '../exceptions/HttpException';
-import ResponseInterface from '../interfaces/ResponseInterface';
 
 require('dotenv').config()
 
@@ -10,7 +8,6 @@ export default class Controller {
     protected path: string = '';
     protected router = express.Router() 
     protected model;
-    protected response: ResponseInterface; 
 
     
 
@@ -32,53 +29,28 @@ export default class Controller {
     }
 
     protected findByIdAndUpdate(id, data) {
-        return this.model.findByIdAndUpdate(id, data, { new: true }, (err, data) => {
-            return this.getResult(err, data);
-        });
+        return this.model.findByIdAndUpdate(id, data, { new: true })
+            .then(data => data)
+            .catch(error => error);
     }
 
     protected findByIdAndRemove(id: string) {
-        return this.model.findByIdAndRemove(id, (err, data) => {
-            return this.getResult(err, { status: 'OK' });
-        });
+        return this.model.findByIdAndRemove(id)
+            .then(data => data)
+            .catch(error => error);
     }
 
     protected findOne(params: mongoose.Document) {
-        return this.model.findOne(params, (err, data) => {
-            return this.getResult(err, data);
-        });
+        return this.model.findById(params)
+            .then(data => data)
+            .catch(error => error);
     }
 
     protected createOne(params: mongoose.Document) {
         const request = new this.model(params);
-        return request.save((err, data) => {
-            return this.getResult(err, data);
-        });
-    }
 
-    private setError(err: HttpException) {
-        this.response = {
-            error: err,
-            data: null
-        }
-    }
-
-    private setData(data) {
-        this.response = {
-            error: null,
-            data
-            
-        }
-    }
-
-    private getResponse(): ResponseInterface {
-        return this.response;
-    }
-
-    private getResult(err, data): ResponseInterface {
-        if (err) this.setError(err);
-        else this.setData(data);
-
-        return this.getResponse();
+        return request.save()
+            .then(data => data)
+            .catch(error => error);
     }
 }

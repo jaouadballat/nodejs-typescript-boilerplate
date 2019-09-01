@@ -24,10 +24,10 @@ class PostController extends  Controller {
     
     private initialzeRoutes = () => {
         this.router.get(this.path, this.getAllPosts);
-        // this.router.post(this.path, this.createPost);
+        this.router.post(this.path, this.createPost);
         this.router.get(`${this.path}/:id`, this.getPostById);
-        // this.router.put(`${this.path}/:id`, this.updatePost);
-        // this.router.delete(`${this.path}/:id`, this.removePost);
+        this.router.put(`${this.path}/:id`, this.updatePost);
+        this.router.delete(`${this.path}/:id`, this.removePost);
     }
 
     private getAllPosts =  (request: express.Request, response: express.Response, next: express.NextFunction) => {
@@ -37,14 +37,11 @@ class PostController extends  Controller {
             
     }
 
-    //  private createPost = (request: express.Request, response: express.Response) => {
-    //     const newPost = new this.post(request.body);
-    //     return newPost.save((err, post) => {
-    //         if(err) return console.log(err)
-    //         return response.send(post)
-
-    //     })
-    // }
+    private createPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+         this.createOne(request.body)
+            .then(post => response.send(post))
+            .catch(error => next(new HttpException(500, error)));
+    }
 
     private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const postId: express.Request = request.params.id;
@@ -56,22 +53,28 @@ class PostController extends  Controller {
             .catch(error => next(new HttpException(500, error)));
     }
 
-    // private updatePost = (request: express.Request, response: express.Response) => {
-    //     const updatedPost: Post = request.body;
-    //     const postId = request.params.id
-    //     this.post.findByIdAndUpdate(postId, updatedPost, {new: true}, (err, post) => {
-    //         if(err) return console.log(err);
-    //             return response.send(post);
-    //     });
-    // }
+    private updatePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+        const updatedPost: Post = request.body;
+        const postId = request.params.id
 
-    // private removePost = (request: express.Request, response: express.Response) => {
-    //     const postId = request.params.id
-    //     this.post.findByIdAndRemove(postId, (err, post) => {
-    //         if (err) return console.log(err);
-    //         return response.json({status: 'OK'});
-    //     });
-    // }
+        this.findByIdAndUpdate(postId, updatedPost)
+            .then(post => {
+                if (!post) return next(new PostNotFoundException(404, 'Post not found.'));
+                return response.send(post);
+            })
+            .catch(error => next(new HttpException(500, error)));
+    }
+
+    private removePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+        const postId: string = request.params.id;
+
+        this.findByIdAndRemove(postId)
+            .then(data => {
+                if (!data) return next(new PostNotFoundException(404, 'Post not found.'));
+                return response.send({ status: 'OK' });
+            })
+            .catch(error => next(new HttpException(500, error)));
+    }
 }
 
 export default PostController;
