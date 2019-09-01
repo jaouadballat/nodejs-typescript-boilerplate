@@ -15,7 +15,7 @@ class App  {
         this.initializeMiddelwares();
         this.initializeControllers(controllers);
         this.inizializeErrorHandler();
-        this.connectToDB()
+        this.connectToDB();
     }
 
     private initializeMiddelwares() {
