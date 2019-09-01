@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as mongoose from 'mongoose';
 import * as bodyParser from 'body-parser';
 import errorMiddleware from './middlewars/error.middleware'
 
@@ -14,6 +15,7 @@ class App  {
         this.initializeMiddelwares();
         this.initializeControllers(controllers);
         this.inizializeErrorHandler();
+        this.connectToDB()
     }
 
     private initializeMiddelwares() {
@@ -27,7 +29,15 @@ class App  {
     }
 
     private inizializeErrorHandler() {
-        this.app.use(errorMiddleware)
+        return this.app.use(errorMiddleware)
+    }
+
+    private connectToDB() {
+        mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true }, function (err) {
+            if (err) return console.log('failed to connect to the DB');
+            console.log(`-------------------Connected to DB-------------------------------`);
+        })
+
     }
 
     public listen() {
