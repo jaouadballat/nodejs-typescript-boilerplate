@@ -5,7 +5,7 @@ import PostModel from '../../Model/Post.model'
 import HttpException from '../../exceptions/HttpException';
 import PostNotFoundException from '../../exceptions/PostNotFoundException';
 
-class PostController extends  Controller {
+class PostController extends Controller{
 
     private readonly PATH: string = '/posts';
     private post;
@@ -15,10 +15,10 @@ class PostController extends  Controller {
         this.setPath(this.PATH);
         this.initialzeRoutes();
         this.model = PostModel;
-        
+
     }
 
-    private setPath = (path): void =>{
+    private setPath = (path): void => {
         this.path = path
     }
     

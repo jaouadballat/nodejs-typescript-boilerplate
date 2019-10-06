@@ -1,5 +1,7 @@
 import * as express from 'express';
 import * as mongoose from 'mongoose';
+import ResponseInterface from '../interfaces/ResponseInterface';
+import HttpException from '../exceptions/HttpException';
 
 require('dotenv').config()
 
@@ -9,7 +11,12 @@ export default class Controller {
     protected router = express.Router() 
     protected model;
 
-    
+
+
+    protected router = express.Router();
+    protected model;
+    protected response: ResponseInterface;
+
 
     public static handle() {
         return new this();
