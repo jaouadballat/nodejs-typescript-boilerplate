@@ -13,63 +13,70 @@ import DataStoredInTokenInterface from "../../interfaces/DataStoredInTokenInterf
 require('dotenv').config()
 
 export default class AuthenticatedController extends Controller {
-    
+    private readonly PATH = '/auth';
 
     constructor() {
         super();
-        this.path = 'auth';
-        this.model = UserModel;
+        this.setPath(this.PATH)
         this.initializeRoutes();
+        this.path = this.PATH;
+        this.model = UserModel;
+
     }
 
-    private initializeRoutes() {
+    private initializeRoutes = () => {
         this.router.post(`${this.path}/signup`, this.register);
         this.router.post(`${this.path}/signin`, this.login);
     }
 
-    private register(request: express.Request, response: express.Response, next: express.NextFunction) {
+    private register = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
+
         let userBody: IUser = request.body;
         let hashedPassword;
+        let user = null;
+        try {
+            user =  await this.findOne({email: userBody.email});
+            if(user) return next(new UserWithThatEmailAlreadyExist(userBody.email));
+            const salt = await bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS));
+            const hash = await bcrypt.hash(userBody.password, salt);
+            hashedPassword = hash;
+            user = {
+                ...userBody,
+                password: hashedPassword
+            };
+            const createdUser = await this.model.create(user);
+            let tokenData = this.createToken(createdUser);
+            return response.send(tokenData);
 
-        let { error, user } = this.findOne(userBody.email);
-        if(error) return next(new HttpException(500, error));
-        if(user) return next(new UserWithThatEmailAlreadyExist(user.email));
-
-        bcrypt.hash(user.password, process.env.SALT_ROUNDS, function(err, hash) {
-            if(err) return next(new HttpException(500, error));
-            hashedPassword = hash; 
-        });
-
-        let tokenData = this.createToken(user);
-        response.cookie('token',tokenData.token, { maxAge: tokenData.expireIn, httpOnly: true });
-        
-        user = {
-            ...user,
-            password: hashedPassword
-        };
-
-        this.model.create(user);
-
-        return response.send(user);
-
+        } catch(error) {
+            next(new HttpException(500, error.message));
+        }
     }
 
-    private login(request: express.Request, response: express.Response, next: express.NextFunction) {
-        let userRequest: IUser = request.body;
-        let { error, user } = this.findOne(userRequest.email);
-        if(error) return next(new HttpException(500, error));
-        if(!user) return next(new WrongCredentialException());
-            bcrypt.compare(user.password, user.password, (err, res) => {
-                if(!res) return next(new WrongCredentialException());
+    private login = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
+        const userRequest: IUser = request.body;
+        let user = null;
+        try {
+            user =  await this.findOne({email: userRequest.email});
+            if(!user) return next(new WrongCredentialException());
+            const isEqual = await bcrypt.compare(userRequest.password, user.password)
+            if(!isEqual) return next(new WrongCredentialException());
+            let tokenData = this.createToken(user);
+            const result = {
+                token: tokenData,
+                id: user._id,
+                email: user.email,
+                name: user.name
+            }
+            return response.send(result);
 
-                let tokenData = this.createToken(user);
-                response.cookie('token',tokenData.token, { maxAge: tokenData.expireIn, httpOnly: true });
+        } catch(error) {
+            next(new HttpException(500, error.message));
+        }
+    }
 
-                return response.send({
-                    ...user,
-                    password: undefined
-                });
-            });
+    private setPath(path: string): void {
+        this.path = path;
     }
 
     private createToken(user): TokenInterface {

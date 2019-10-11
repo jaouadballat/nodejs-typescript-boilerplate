@@ -8,13 +8,8 @@ require('dotenv').config()
 export default class Controller {
 
     protected path: string = '';
-    protected router = express.Router() 
     protected model;
-
-
-
     protected router = express.Router();
-    protected model;
     protected response: ResponseInterface;
 
 
@@ -47,8 +42,8 @@ export default class Controller {
             .catch(error => error);
     }
 
-    protected findOne(params: mongoose.Document) {
-        return this.model.findById(params)
+    protected findOne(params: object) {
+        return this.model.findOne(params)
             .then(data => data)
             .catch(error => error);
     }
