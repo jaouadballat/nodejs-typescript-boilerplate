@@ -10,7 +10,6 @@ export default class Controller {
     protected path: string = '';
     protected model;
     protected router = express.Router();
-    protected response: ResponseInterface;
 
 
     public static handle() {
