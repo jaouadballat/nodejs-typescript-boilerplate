@@ -18,8 +18,7 @@ or download and unzip current `master` branch:
 wget https://github.com/jaouadballat/nodejs-typescript-boilerplate/archive/master.zip -O nodejs-typescript-boilerplate
 unzip nodejs-typescript-boilerplate.zip && rm nodejs-typescript-boilerplate.zip
 ```
-
-Now start adding your code in the `src` folder.
+Update your env file and now start adding your code in the `src` folder.
 
 ## Available scripts
 
