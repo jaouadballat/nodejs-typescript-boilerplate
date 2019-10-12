@@ -1,10 +1,10 @@
 # nodejs-typescript-boilerplate
 
-Minimalistic boilerplate to start working on [Node.js][nodejs] project in [TypeScript][typescript] [3.6][typescript-36].
+Minimalistic boilerplate to start working on Nodejs project in Typescript.
 
 ## Quick start
 
-This project is intended to be used with the latest Active LTS release of [Node.js][nodejs]. To start, just clone the repository with following commands:
+This project is intended to be used with the latest Active LTS release of Nodejs. To start, just clone the repository with following commands:
 
 ```sh
 git clone https://github.com/jaouadballat/nodejs-typescript-boilerplate
